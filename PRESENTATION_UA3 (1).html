@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Présentation UA3 - Classification SMS Spam</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        
+        .slide {
+            width: 100%;
+            min-height: 100vh;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-bottom: 3px solid #4a4a6a;
+            page-break-after: always;
+        }
+        
+        .slide-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            text-align: center;
+        }
+        
+        .slide-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        .slide-highlight {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+        }
+        
+        .slide-problem {
+            background: linear-gradient(135deg, #4a1a1a 0%, #1a1a2e 100%);
+        }
+        
+        .slide-success {
+            background: linear-gradient(135deg, #1a4a1a 0%, #1a1a2e 100%);
+        }
+        
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        h2 {
+            font-size: 2.8em;
+            margin-bottom: 40px;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+        
+        h3 {
+            font-size: 2em;
+            margin: 20px 0;
+            color: #a8a8d8;
+        }
+        
+        p, li {
+            font-size: 1.6em;
+            line-height: 1.8;
+            margin: 15px 0;
+        }
+        
+        ul {
+            margin-left: 50px;
+        }
+        
+        .subtitle {
+            font-size: 2em;
+            color: #a8a8d8;
+            margin-top: 20px;
+        }
+        
+        .author {
+            font-size: 1.5em;
+            margin-top: 50px;
+            color: #888;
+        }
+        
+        .highlight-box {
+            background: rgba(102, 126, 234, 0.2);
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .warning-box {
+            background: rgba(234, 102, 102, 0.2);
+            border-left: 5px solid #ea6666;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .success-box {
+            background: rgba(102, 234, 102, 0.2);
+            border-left: 5px solid #66ea66;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            font-size: 1.4em;
+        }
+        
+        th, td {
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #4a4a6a;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+        }
+        
+        .code-block {
+            background: #0d1117;
+            padding: 25px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.3em;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        
+        .metric-big {
+            font-size: 4em;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+        }
+        
+        .metric-label {
+            font-size: 1.5em;
+            text-align: center;
+            color: #888;
+        }
+        
+        .slide-number {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            font-size: 1.2em;
+            color: #666;
+        }
+        
+        .pipeline-arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .comparison-good { color: #66ea66; }
+        .comparison-bad { color: #ea6666; }
+        .comparison-best { color: #ffd700; }
+        
+        @media print {
+            .slide {
+                page-break-after: always;
+                height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide slide-title">
+    <h1>🎯 Classification de SMS Spam</h1>
+    <p class="subtitle">Avec Prétraitement Textuel et Apprentissage Profond</p>
+    <p class="subtitle" style="margin-top: 40px;">Évaluation Sommative UA3</p>
+    <p class="author">Intelligence Artificielle appliquée au prétraitement des données</p>
+    <p class="author">Cours 8, 9, 10 et 11</p>
+</div>
+
+<!-- SLIDE 2: Objectives -->
+<div class="slide slide-content">
+    <h2>📋 Objectifs du Projet</h2>
+    <ul>
+        <li><span class="emoji">📝</span> <strong>Prétraitement textuel</strong> (Cours 10) : Tokenisation, stopwords, lemmatisation</li>
+        <li><span class="emoji">🔢</span> <strong>Vectorisation TF-IDF</strong> : Transformation texte → vecteurs numériques</li>
+        <li><span class="emoji">🔄</span> <strong>Autoencodeur</strong> (Cours 9) : Réduction de dimensionnalité</li>
+        <li><span class="emoji">🤖</span> <strong>BERT</strong> (Cours 11) : Extraction de caractéristiques sémantiques</li>
+        <li><span class="emoji">📊</span> <strong>Comparaison</strong> : Évaluer les 3 approches</li>
+    </ul>
+</div>
+
+<!-- SLIDE 3: Dataset -->
+<div class="slide slide-content">
+    <h2>📊 Le Dataset : SMS Spam Collection</h2>
+    <div class="two-columns">
+        <div>
+            <div class="metric-big">5,572</div>
+            <div class="metric-label">Messages SMS</div>
+            <br>
+            <div class="highlight-box">
+                <p><strong>Source:</strong> UCI Machine Learning Repository</p>
+                <p><strong>Langue:</strong> Anglais</p>
+                <p><strong>Tâche:</strong> Classification binaire</p>
+            </div>
+        </div>
+        <div>
+            <h3>Distribution des classes</h3>
+            <table>
+                <tr>
+                    <th>Classe</th>
+                    <th>Nombre</th>
+                    <th>%</th>
+                </tr>
+                <tr>
+                    <td>✅ Ham (légitime)</td>
+                    <td>4,825</td>
+                    <td>86.6%</td>
+                </tr>
+                <tr>
+                    <td>🚨 Spam</td>
+                    <td>747</td>
+                    <td>13.4%</td>
+                </tr>
+            </table>
+            <div class="warning-box">
+                <p>⚠️ <strong>Dataset déséquilibré!</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: EDA -->
+<div class="slide slide-content">
+    <h2>🔍 Analyse Exploratoire</h2>
+    <div class="two-columns">
+        <div>
+            <h3>Observations clés</h3>
+            <ul>
+                <li>Aucune valeur manquante</li>
+                <li>5,169 messages uniques</li>
+                <li>Quelques doublons présents</li>
+            </ul>
+            <div class="highlight-box" style="margin-top: 30px;">
+                <p><strong>💡 Découverte importante:</strong></p>
+                <p>Les messages SPAM sont généralement <strong>plus longs</strong> que les messages HAM</p>
+            </div>
+        </div>
+        <div>
+            <h3>Longueur moyenne des messages</h3>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Caractères</th>
+                    <th>Mots</th>
+                </tr>
+                <tr>
+                    <td>Ham</td>
+                    <td>~70</td>
+                    <td>~15</td>
+                </tr>
+                <tr>
+                    <td>Spam</td>
+                    <td>~140</td>
+                    <td>~25</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 5: Preprocessing -->
+<div class="slide slide-content">
+    <h2>🔧 Prétraitement Textuel (Cours 10)</h2>
+    <h3>Pipeline en 5 étapes</h3>
+    <div class="code-block">
+        Texte brut → Minuscules → Nettoyage → Tokenisation → Stopwords → Lemmatisation → Texte propre
+    </div>
+    <div class="two-columns" style="margin-top: 30px;">
+        <div class="warning-box">
+            <p><strong>AVANT:</strong></p>
+            <p style="font-family: monospace;">"URGENT! You have won a FREE iPhone! Call NOW to claim your prize!!!"</p>
+        </div>
+        <div class="success-box">
+            <p><strong>APRÈS:</strong></p>
+            <p style="font-family: monospace;">"urgent win free iphone call claim prize"</p>
+        </div>
+    </div>
+    <div class="highlight-box" style="margin-top: 30px;">
+        <p>🎯 <strong>Objectif:</strong> Réduire le bruit et normaliser le texte pour faciliter l'apprentissage</p>
+    </div>
+</div>
+
+<!-- SLIDE 6: TF-IDF -->
+<div class="slide slide-content">
+    <h2>📐 Vectorisation TF-IDF</h2>
+    <p><strong>TF-IDF</strong> = Term Frequency × Inverse Document Frequency</p>
+    <div class="code-block">
+        TF-IDF(t,d) = TF(t,d) × log(N / df(t))
+    </div>
+    <div class="two-columns" style="margin-top: 30px;">
+        <div>
+            <h3>Configuration</h3>
+            <table>
+                <tr><th>Paramètre</th><th>Valeur</th></tr>
+                <tr><td>max_features</td><td>5,000</td></tr>
+                <tr><td>ngram_range</td><td>(1, 2)</td></tr>
+            </table>
+        </div>
+        <div>
+            <h3>Résultat</h3>
+            <div class="highlight-box">
+                <p>Matrice de dimensions:</p>
+                <p class="metric-big" style="font-size: 2.5em;">5,572 × 5,000</p>
+                <p class="metric-label">échantillons × features</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7: Data Split -->
+<div class="slide slide-content">
+    <h2>✂️ Division des Données</h2>
+    <div class="two-columns">
+        <div>
+            <h3 style="color: #66ea66;">Entraînement (80%)</h3>
+            <div class="metric-big" style="color: #66ea66;">4,457</div>
+            <div class="metric-label">échantillons</div>
+            <table style="margin-top: 20px;">
+                <tr><td>Ham</td><td>3,859 (86.6%)</td></tr>
+                <tr><td>Spam</td><td>598 (13.4%)</td></tr>
+            </table>
+        </div>
+        <div>
+            <h3 style="color: #667eea;">Test (20%)</h3>
+            <div class="metric-big">1,115</div>
+            <div class="metric-label">échantillons</div>
+            <table style="margin-top: 20px;">
+                <tr><td>Ham</td><td>966 (86.6%)</td></tr>
+                <tr><td>Spam</td><td>149 (13.4%)</td></tr>
+            </table>
+        </div>
+    </div>
+    <div class="success-box" style="margin-top: 30px;">
+        <p>✅ <strong>Division stratifiée:</strong> Les proportions sont identiques dans les deux ensembles grâce à <code>stratify=y_encoded</code></p>
+    </div>
+</div>
+
+<!-- SLIDE 8: Autoencoder -->
+<div class="slide slide-content">
+    <h2>🔄 Autoencodeur (Cours 9)</h2>
+    <h3>Architecture</h3>
+    <div class="code-block" style="text-align: center;">
+        Entrée (5000) → 512 → 256 → 128 → <strong style="color: #ffd700;">[64]</strong> → 128 → 256 → 512 → Sortie (5000)
+        <br><br>
+        <span style="color: #888;">↑ Encodeur</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span style="color: #ffd700;">↑ Latent</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span style="color: #888;">↑ Décodeur</span>
+    </div>
+    <div class="two-columns" style="margin-top: 30px;">
+        <div class="highlight-box">
+            <p><strong>Compression:</strong></p>
+            <p class="metric-big" style="font-size: 3em;">78×</p>
+            <p class="metric-label">5000 → 64 dimensions</p>
+        </div>
+        <div class="highlight-box">
+            <p><strong>Objectif:</strong></p>
+            <p>Apprendre une représentation compressée qui préserve l'information essentielle</p>
+            <p style="margin-top: 15px;">⚠️ Apprentissage <strong>non-supervisé</strong></p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 9: BERT -->
+<div class="slide slide-content">
+    <h2>🤖 BERT (Cours 11)</h2>
+    <p><strong>B</strong>idirectional <strong>E</strong>ncoder <strong>R</strong>epresentations from <strong>T</strong>ransformers</p>
+    <div class="two-columns" style="margin-top: 30px;">
+        <div>
+            <h3>Caractéristiques</h3>
+            <table>
+                <tr><td>Modèle</td><td>bert-base-uncased</td></tr>
+                <tr><td>Paramètres</td><td>110 millions</td></tr>
+                <tr><td>Dimensions</td><td>768</td></tr>
+                <tr><td>Extraction</td><td>Token [CLS]</td></tr>
+            </table>
+        </div>
+        <div>
+            <h3>Avantages vs TF-IDF</h3>
+            <ul>
+                <li>✅ Compréhension du <strong>contexte</strong></li>
+                <li>✅ Représentation <strong>sémantique</strong></li>
+                <li>✅ <strong>Transfer learning</strong></li>
+                <li>✅ Gère les mots inconnus</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight-box" style="margin-top: 30px;">
+        <p>💡 BERT comprend que "FREE shipping" et "FREE money" ont des contextes différents</p>
+    </div>
+</div>
+
+<!-- SLIDE 10: Classifier -->
+<div class="slide slide-content">
+    <h2>🧠 Classificateur Neural</h2>
+    <h3>Architecture identique pour les 3 approches</h3>
+    <div class="code-block" style="text-align: center;">
+        Entrée (variable) → Dense(128) → Dropout(0.3) → Dense(64) → Dropout(0.3) → Dense(32) → Dense(1, sigmoid)
+    </div>
+    <div class="two-columns" style="margin-top: 40px;">
+        <div class="highlight-box">
+            <h3>Configuration</h3>
+            <ul>
+                <li>Optimiseur: Adam (lr=0.001)</li>
+                <li>Loss: Binary Crossentropy</li>
+                <li>Epochs: 30 (avec early stopping)</li>
+                <li>Batch size: 64</li>
+            </ul>
+        </div>
+        <div class="highlight-box">
+            <h3>Entrées par approche</h3>
+            <table>
+                <tr><td>TF-IDF</td><td>5,000 dim</td></tr>
+                <tr><td>Autoencodeur</td><td>64 dim</td></tr>
+                <tr><td>BERT</td><td>768 dim</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 11: Results Table -->
+<div class="slide slide-highlight">
+    <h2>🏆 Résultats Comparatifs</h2>
+    <table style="font-size: 1.6em;">
+        <tr>
+            <th>Modèle</th>
+            <th>Dimensions</th>
+            <th>Accuracy</th>
+            <th>AUC-ROC</th>
+            <th>Recall Spam</th>
+            <th>Verdict</th>
+        </tr>
+        <tr>
+            <td><strong>TF-IDF</strong></td>
+            <td>5,000</td>
+            <td class="comparison-good">97.58%</td>
+            <td class="comparison-good">0.9828</td>
+            <td>87%</td>
+            <td>✅ Très bon</td>
+        </tr>
+        <tr>
+            <td><strong>Autoencodeur</strong></td>
+            <td>64</td>
+            <td>86.64%</td>
+            <td class="comparison-bad">0.4127</td>
+            <td class="comparison-bad">0%</td>
+            <td>❌ Échec</td>
+        </tr>
+        <tr>
+            <td><strong>BERT</strong></td>
+            <td>768</td>
+            <td class="comparison-best">98.25%</td>
+            <td class="comparison-best">0.9974</td>
+            <td class="comparison-good">91%</td>
+            <td>🏆 Meilleur</td>
+        </tr>
+    </table>
+</div>
+
+<!-- SLIDE 12: Problem with Autoencoder -->
+<div class="slide slide-problem">
+    <h2>⚠️ Le Problème de l'Autoencodeur</h2>
+    <div class="two-columns">
+        <div>
+            <h3>Symptômes</h3>
+            <ul>
+                <li>Accuracy: 86.64% ✓ (semble OK)</li>
+                <li>Recall Spam: <span class="comparison-bad"><strong>0%</strong></span> 🚨</li>
+                <li>AUC-ROC: 0.41 (pire qu'aléatoire!)</li>
+            </ul>
+            <div class="warning-box" style="margin-top: 30px;">
+                <p>Le modèle prédit <strong>TOUT</strong> comme "Ham"!</p>
+                <p>Il ne détecte <strong>AUCUN</strong> spam.</p>
+            </div>
+        </div>
+        <div>
+            <h3>Causes</h3>
+            <ol>
+                <li>Apprentissage <strong>non-supervisé</strong></li>
+                <li>Perte d'info discriminante</li>
+                <li>Dataset <strong>déséquilibré</strong></li>
+            </ol>
+            <div class="highlight-box" style="margin-top: 30px;">
+                <p><strong>💡 Leçon:</strong></p>
+                <p>L'accuracy seule peut être <strong>TROMPEUSE</strong> sur un dataset déséquilibré!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 13: ROC Curves -->
+<div class="slide slide-content">
+    <h2>📈 Courbes ROC</h2>
+    <div class="highlight-box">
+        <p>La courbe ROC montre le compromis entre le <strong>Taux de Vrais Positifs</strong> et le <strong>Taux de Faux Positifs</strong>.</p>
+    </div>
+    <div class="two-columns" style="margin-top: 30px;">
+        <div>
+            <h3>Interprétation</h3>
+            <ul>
+                <li>Plus la courbe est proche du coin supérieur gauche, meilleur est le modèle</li>
+                <li>La diagonale = classificateur aléatoire</li>
+                <li>AUC = 1.0 → parfait</li>
+                <li>AUC = 0.5 → aléatoire</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Nos résultats AUC</h3>
+            <table>
+                <tr>
+                    <td>BERT</td>
+                    <td class="comparison-best">0.9974</td>
+                </tr>
+                <tr>
+                    <td>TF-IDF</td>
+                    <td class="comparison-good">0.9828</td>
+                </tr>
+                <tr>
+                    <td>Autoencodeur</td>
+                    <td class="comparison-bad">0.4127</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 14: Confusion Matrices -->
+<div class="slide slide-content">
+    <h2>📊 Matrices de Confusion</h2>
+    <div class="two-columns">
+        <div>
+            <h3>TF-IDF ✅</h3>
+            <table>
+                <tr><th></th><th>Prédit Ham</th><th>Prédit Spam</th></tr>
+                <tr><td><strong>Réel Ham</strong></td><td style="background: #1a4a1a;">956</td><td>10</td></tr>
+                <tr><td><strong>Réel Spam</strong></td><td>19</td><td style="background: #1a4a1a;">130</td></tr>
+            </table>
+        </div>
+        <div>
+            <h3>Autoencodeur ❌</h3>
+            <table>
+                <tr><th></th><th>Prédit Ham</th><th>Prédit Spam</th></tr>
+                <tr><td><strong>Réel Ham</strong></td><td style="background: #1a4a1a;">966</td><td>0</td></tr>
+                <tr><td><strong>Réel Spam</strong></td><td style="background: #4a1a1a;">149</td><td>0</td></tr>
+            </table>
+            <p style="color: #ea6666; margin-top: 15px;">⚠️ Aucun spam détecté!</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 15: Demo -->
+<div class="slide slide-success">
+    <h2>🔮 Démonstration - Prédictions BERT</h2>
+    <table style="font-size: 1.3em;">
+        <tr>
+            <th>Message</th>
+            <th>Prédiction</th>
+            <th>Confiance</th>
+        </tr>
+        <tr>
+            <td>"Hey! How are you doing?"</td>
+            <td class="comparison-good">✅ HAM</td>
+            <td>0.01%</td>
+        </tr>
+        <tr>
+            <td>"CONGRATULATIONS! You've won £10000!"</td>
+            <td class="comparison-bad">🚨 SPAM</td>
+            <td>97.28%</td>
+        </tr>
+        <tr>
+            <td>"Meeting at 3pm today."</td>
+            <td class="comparison-good">✅ HAM</td>
+            <td>0.46%</td>
+        </tr>
+        <tr>
+            <td>"FREE entry to win iPhone!"</td>
+            <td class="comparison-bad">🚨 SPAM</td>
+            <td>95.52%</td>
+        </tr>
+        <tr>
+            <td>"Can you pick up some milk?"</td>
+            <td class="comparison-good">✅ HAM</td>
+            <td>0.02%</td>
+        </tr>
+        <tr>
+            <td>"URGENT: Your bank account compromised!"</td>
+            <td class="comparison-bad">🚨 SPAM</td>
+            <td>95.86%</td>
+        </tr>
+    </table>
+</div>
+
+<!-- SLIDE 16: Conclusion -->
+<div class="slide slide-highlight">
+    <h2>🎯 Conclusion</h2>
+    <h3>Classement Final</h3>
+    <div class="two-columns">
+        <div>
+            <div style="font-size: 2em; margin: 20px 0;">🥇 <strong>BERT</strong></div>
+            <p>98.25% accuracy | AUC 0.9974</p>
+            <p style="color: #888;">Meilleure compréhension sémantique</p>
+            
+            <div style="font-size: 2em; margin: 20px 0;">🥈 <strong>TF-IDF</strong></div>
+            <p>97.58% accuracy | AUC 0.9828</p>
+            <p style="color: #888;">Simple, rapide, efficace</p>
+            
+            <div style="font-size: 2em; margin: 20px 0;">🥉 <strong>Autoencodeur</strong></div>
+            <p>86.64% accuracy | AUC 0.4127</p>
+            <p style="color: #ea6666;">❌ Ne détecte aucun spam</p>
+        </div>
+        <div>
+            <div class="highlight-box">
+                <h3>Leçons Apprises</h3>
+                <ol>
+                    <li>L'accuracy seule est insuffisante</li>
+                    <li>Toujours vérifier Recall et AUC</li>
+                    <li>La réduction non-supervisée peut perdre de l'info critique</li>
+                    <li>BERT excelle pour la compréhension textuelle</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 17: Improvements -->
+<div class="slide slide-content">
+    <h2>🚀 Améliorations Futures</h2>
+    <div class="two-columns">
+        <div>
+            <h3>Court terme</h3>
+            <ul>
+                <li>Fine-tuning de BERT sur notre dataset</li>
+                <li>Équilibrage des classes (SMOTE)</li>
+                <li>Pondération des classes (class_weight)</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Long terme</h3>
+            <ul>
+                <li>Autoencodeur supervisé ou VAE</li>
+                <li>Ensemble de modèles</li>
+                <li>Hyperparameter tuning (GridSearch)</li>
+                <li>Déploiement en production</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight-box" style="margin-top: 40px;">
+        <p>💡 <strong>Idée:</strong> Combiner TF-IDF (rapide) pour le filtrage initial et BERT (précis) pour les cas ambigus</p>
+    </div>
+</div>
+
+<!-- SLIDE 18: Questions -->
+<div class="slide slide-title">
+    <h1>❓ Questions</h1>
+    <p class="subtitle" style="margin-top: 50px;">Merci pour votre attention!</p>
+    <div style="margin-top: 60px;">
+        <p style="font-size: 1.5em;">📁 Fichiers du projet:</p>
+        <p style="font-size: 1.2em; color: #a8a8d8;">• 000Projet_evaluation_UA3.ipynb</p>
+        <p style="font-size: 1.2em; color: #a8a8d8;">• SMSSpamCollection</p>
+        <p style="font-size: 1.2em; color: #a8a8d8;">• RESUME_PROJET_UA3.md</p>
+    </div>
+</div>
+
+<script>
+    // Add slide numbers
+    document.querySelectorAll('.slide').forEach((slide, index) => {
+        const slideNum = document.createElement('div');
+        slideNum.className = 'slide-number';
+        slideNum.textContent = `${index + 1} / 18`;
+        slide.appendChild(slideNum);
+    });
+</script>
+
+</body>
+</html>
